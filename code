@@ -1,6 +1,8 @@
+const byte buttonPin = 2;
 int force = 0;
 int temperature = 0
 int moisture = 0;
+volatile int mode = 1;
   
 void setup()
 {
@@ -9,24 +11,44 @@ void setup()
   pinMode(A1, INPUT);
   Serial.begin(9600);
   pinMode(13, OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(buttonPin), stampa, RISING);
 }
 
 void loop()
-{
+{switch(mode){
+case 0:{
+  	Serial.print("the moisture is   ");
+ 	Serial.print(moisture);
+ 	Serial.print("critic value is---");
+  
+  Serial.print("the weight is   ");
+ 	Serial.print(force);
+ 	Serial.print("critic value is---");
+  
+  Serial.print("the available space is   ");
+ 	Serial.print(temperature);
+ 	Serial.print("critic value is---");
+      mode=1;}
+      break;
+
+case 1:{
   force = analogRead(A0);
   moisture = analogRead(A1);
   analogWrite(3, force);
-  if (force > 0)
-  {
-    digitalWrite (3, HIGH);
-  }
-  else
-  {
-    digitalWrite (3, LOW);
-  }
-  
+  digitalWrite (3, LOW);
   digitalWrite(13, LOW);
-  if (moisture > 10) {
-    digitalWrite(13, HIGH);
-  delay(1000); 
+  if (force > 0){
+          digitalWrite (3, HIGH);
+  }
+  if (moisture > 30) {
+          digitalWrite(13, HIGH);
+  }
+          }
+        break;
+}
+}
+
+//interrupt function prints the current value
+void stampa() {
+ mode=0;
 }
